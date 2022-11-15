@@ -36,5 +36,5 @@ public class User {
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private List<Comment> user_comments;
+    private List<Comment> comments;
 }

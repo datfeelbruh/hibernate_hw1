@@ -1,7 +1,6 @@
 package org.example;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.dao.AppDao;
 import org.example.entities.Comment;
 import org.example.entities.Post;
 import org.example.entities.User;
@@ -33,7 +32,7 @@ public class Runner {
         appService.createComment(comment2);
 
         System.out.println(appService.getUserStat());
-        System.out.println(appService.getUserInfoById(1));
-        System.out.println(appService.getUserInfoById(2));
+//        System.out.println(appService.getUserInfoById(1));
+//        System.out.println(appService.getUserInfoById(2));
     }
 }

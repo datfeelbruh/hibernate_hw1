@@ -6,12 +6,8 @@ import org.example.entities.Comment;
 import org.example.entities.Post;
 import org.example.entities.User;
 import org.hibernate.*;
-import org.hibernate.query.Query;
 
-import java.security.Timestamp;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -42,22 +38,19 @@ public class AppDao {
 
     public String getStatistics() {
         Session session = HibernateUtil.createSessionFactory().openSession();
-        List<User> users = session.createQuery("FROM User").list();
-        List<Post> posts = session.createQuery("FROM Post").list();
-        List<Comment> comments = session.createQuery("FROM Comment").list();
+        int userCount = session.createQuery("FROM User").list().size();
+        int postCount = session.createQuery("FROM Post").list().size();
+        int commentCount = session.createQuery("FROM Comment").list().size();
         session.close();
 
-        return "Количество пользователей - " + users.size() + "\n" +
-                "Количество постов - " + posts.size() + "\n" +
-                "Количество комментариев - " + comments.size();
+        return "Количество пользователей - " + userCount + "\n" +
+                "Количество постов - " + postCount + "\n" +
+                "Количество комментариев - " + commentCount;
     }
 
     public String userInfoById(int id) {
         Session session = HibernateUtil.createSessionFactory().openSession();
-        String hql = "FROM User where id = :paramId";
-        Query query = session.createQuery(hql);
-        query.setParameter("paramId", id);
-        User user = (User) query.uniqueResult();
+        User user = session.get(User.class, id);
 
         String userName = user.getName();
         String userCreated = user.getCreated_at().toString();
@@ -66,7 +59,8 @@ public class AppDao {
                 .limit(1)
                 .map(Post::getText)
                 .collect(Collectors.joining());
-        int commentCount = user.getUser_comments().size();
+        int commentCount = user.getComments().size();
+        session.close();
 
         return "Имя пользователя - " + userName + "\n" +
                 "Дата создания - " + userCreated + "\n" +
