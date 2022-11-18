@@ -12,26 +12,29 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class AppDao {
-    public void addUser(User user) {
+    public void addUser(String name, String password) {
         Session session = HibernateUtil.createSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
-        session.save(user);
+        session.save(new User(name, password));
         transaction.commit();
         session.close();
     }
 
-    public void addPost(Post post) {
+    public void addPost(String text, Integer userId) {
         Session session = HibernateUtil.createSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
-        session.save(post);
+        User user = session.get(User.class, userId);
+        session.save(new Post(text, user));
         transaction.commit();
         session.close();
     }
 
-    public void addComment(Comment comment) {
+    public void addComment(String text, Integer postId, Integer userId) {
         Session session = HibernateUtil.createSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
-        session.save(comment);
+        Post post = session.get(Post.class, postId);
+        User user = session.get(User.class, userId);
+        session.save(new Comment(text, post, user));
         transaction.commit();
         session.close();
     }
@@ -48,9 +51,9 @@ public class AppDao {
                 "Количество комментариев - " + commentCount;
     }
 
-    public String userInfoById(int id) {
+    public String userInfoById(Integer userId) {
         Session session = HibernateUtil.createSessionFactory().openSession();
-        User user = session.get(User.class, id);
+        User user = session.get(User.class, userId);
 
         String userName = user.getName();
         String userCreated = user.getCreated_at().toString();
@@ -67,4 +70,5 @@ public class AppDao {
                 "Первый пост - " + firstPostText + "\n" +
                 "Количество комментариев - " + commentCount;
     }
+
 }
